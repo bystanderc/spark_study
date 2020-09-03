@@ -1,8 +1,10 @@
 package com.chen.sparkcore
 
-import com.chen.utils.JedisPoolUtils
-import org.apache.spark.sql.SparkSession
+import com.chen.utils.{JedisPoolUtils, JedisUtils}
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.storage.StorageLevel
+import redis.clients.jedis.Jedis
 
 /**
  * @author bystander
@@ -21,16 +23,22 @@ object RedisSinkTest {
             .master("local[*]")
             .getOrCreate()
 
-        spark.sparkContext.setLogLevel("WARN")
+        val stuDF: DataFrame = spark.read
+            .csv(inputPath)
 
 
-        putData(spark)
+        stuDF.foreach(item => {
+            JedisUtils.set(item.get(0).toString,item.get(1).toString,30)
+        })
+
+
+
 
     }
 
 
     /**
-     * 写入Redis
+     * 使用pipelined批量写入redis
      *
      * @param dataIt
      * @param expireTime
@@ -83,6 +91,13 @@ object RedisSinkTest {
         println(rdd.take(5).mkString("\n"))
 
         //val redisUgiBc = spark.sparkContext.broadcast(redisUgi)
+
+//        rdd.foreachPartition(items => {
+//            items.foreach(item => {
+//                val jedis: Jedis = JedisPoolUtils.getJedis
+//                jedis.set()
+//            })
+//        })
 
 
     }
