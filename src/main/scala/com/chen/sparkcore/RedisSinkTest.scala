@@ -27,9 +27,9 @@ object RedisSinkTest {
             .csv(inputPath)
 
 
-        stuDF.foreach(item => {
-            JedisUtils.set(item.get(0).toString,item.get(1).toString,30)
-        })
+//        stuDF.foreach(item => {
+//            JedisUtils.set(item.get(0).toString,item.get(1).toString,30)
+//        })
 
 
 

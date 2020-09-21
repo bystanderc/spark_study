@@ -21,7 +21,7 @@ public class KafkaConsumerTest implements Runnable {
 
     public KafkaConsumerTest(String topicName) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "192.168.1.7:9092,192.168.1.7:9093,192.168.1.7:9094");
+        props.put("bootstrap.servers", "10.0.101.162:9092,10.0.101.162:9093,10.0.101.162:9094");
         props.put("group.id", GROUPID);
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
@@ -64,7 +64,7 @@ public class KafkaConsumerTest implements Runnable {
         }
     }
     public static void main(String args[]) {
-        KafkaConsumerTest kc = new KafkaConsumerTest("leyou");
+        KafkaConsumerTest kc = new KafkaConsumerTest("public");
 //        KafkaConsumerTest test1 = new KafkaConsumerTest("partopic");
         Thread thread1 = new Thread(kc);
 

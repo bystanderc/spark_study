@@ -1,6 +1,10 @@
 package com.chen.sparksql
 
 import java.io.FileWriter
+import java.util.Properties
+
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.common.serialization.StringSerializer
 
 import scala.util.Random
 

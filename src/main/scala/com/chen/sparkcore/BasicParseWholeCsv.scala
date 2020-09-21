@@ -18,11 +18,13 @@ object BasicParseWholeCsv {
         val master = "spark://localhost:7077"
         val inputFile = "/Users/bystander/IdeaProjects/spark_test2/data/csv/data1.txt"
 
-        val conf: SparkConf = new SparkConf().setAppName("basic parse whole csv")
+        val conf: SparkConf = new SparkConf()
+            .setAppName("basic parse whole csv")
             .setMaster("local[4]")
-            .setJars(List("/Users/bystander/IdeaProjects/spark_test2/target/spark-1.0-SNAPSHOT.jar"))
+//            .setJars(List("/Users/bystander/IdeaProjects/spark_test2/target/spark-1.0-SNAPSHOT.jar"))
 
         val sc = new SparkContext(conf)
+        sc.setLogLevel("WARN")
 
         val result: RDD[(String, Int)] = sc.textFile("/Users/bystander/IdeaProjects/spark_test2/data/csv/data1.txt")
             .flatMap(_.split(" "))
