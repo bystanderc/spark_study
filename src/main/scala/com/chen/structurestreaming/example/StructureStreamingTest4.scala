@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import org.apache.spark.sql.streaming.Trigger
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{Dataset, SparkSession, DataFrame,Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 /**
  * @author bystander
@@ -12,9 +12,9 @@ import org.apache.spark.sql.{Dataset, SparkSession, DataFrame,Row}
  */
 
 //请使用Structured Streaming读取student_info文件夹写的csv文件
-object StructureStreamingTest2 {
+object StructureStreamingTest4 {
     def main(args: Array[String]): Unit = {
-        val session = SparkSession.builder().appName("structure streaming test2")
+        val session = SparkSession.builder().appName("structure streaming test4")
             .master("local[*]")
             .getOrCreate()
 
@@ -30,7 +30,7 @@ object StructureStreamingTest2 {
             .add("date", "string")
 
         //接收数据
-        val StudentDF: DataFrame = session.readStream
+        val StudentDF: DataFrame = session.read
             .schema(studentType)
             .csv("/Users/bystander/IdeaProjects/spark_test2/data/csv/student2.csv")
 
@@ -40,25 +40,14 @@ object StructureStreamingTest2 {
 
         StudentDF.createOrReplaceTempView("student")
 
-        val sex: Dataset[Row] = StudentDF.selectExpr("sex").groupBy("sex").count().sort("count")
+        val df: DataFrame = session.sql("select distinct id as maxId from student")
 
 
+        val dts: Array[String] = df.collect().map(_.get(0).toString)
 
-        //2.2统计出姓“王”男生和女生的各有多少人
-        val wang = StudentDF
-            .selectExpr("name", "sex")
-            .where("name like '王%'")
-            .groupBy("sex")
-            .count()
-            .sort($"count".desc)
-
-        //输出数据
-        wang.writeStream
-            .format("console")
-            .outputMode("complete")
-            .trigger(Trigger.ProcessingTime(1, TimeUnit.MINUTES))
-            .start()
-            .awaitTermination()
+       for (dt <- dts){
+           println(dt)
+       }
     }
 
 }
