@@ -19,7 +19,7 @@ case class Comment(
 object Datas {
     def main(args: Array[String]): Unit = {
 
-        val spark = SparkSession.builder().appName("rng comment test").master("local[10]").getOrCreate()
+        val spark = SparkSession.builder().appName("rng comment test").master("local[*]").getOrCreate()
 
         spark.sparkContext.setLogLevel("WARN")
 

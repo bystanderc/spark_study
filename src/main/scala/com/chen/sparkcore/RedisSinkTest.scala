@@ -1,10 +1,9 @@
 package com.chen.sparkcore
 
 import com.chen.utils.{JedisPoolUtils, JedisUtils}
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.storage.StorageLevel
-import redis.clients.jedis.Jedis
+import redis.clients.jedis.{Jedis, JedisPool, JedisPoolConfig}
 
 /**
  * @author bystander
@@ -27,11 +26,21 @@ object RedisSinkTest {
             .csv(inputPath)
 
 
-//        stuDF.foreach(item => {
-//            JedisUtils.set(item.get(0).toString,item.get(1).toString,30)
-//        })
+        stuDF.foreach(item => {
+            val config = new JedisPoolConfig
+            config.setMaxTotal(20)
+            config.setMaxIdle(20)
+            config.setMinIdle(20)
 
+            config.setTestOnBorrow(true)
+            config.setTestOnReturn(true)
+            val jedisPool = new JedisPool(config, "127.0.0.1", 6379, 1000 * 2)
+            val jedisClient: Jedis = jedisPool.getResource
+            jedisClient.setex(item.get(0).toString,60, item.toString)
+            jedisPool.close()
+        })
 
+        spark.stop()
 
 
     }
@@ -92,12 +101,12 @@ object RedisSinkTest {
 
         //val redisUgiBc = spark.sparkContext.broadcast(redisUgi)
 
-//        rdd.foreachPartition(items => {
-//            items.foreach(item => {
-//                val jedis: Jedis = JedisPoolUtils.getJedis
-//                jedis.set()
-//            })
-//        })
+        //        rdd.foreachPartition(items => {
+        //            items.foreach(item => {
+        //                val jedis: Jedis = JedisPoolUtils.getJedis
+        //                jedis.set()
+        //            })
+        //        })
 
 
     }
